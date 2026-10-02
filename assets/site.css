@@ -374,10 +374,17 @@ p{line-height:1.65}
   position:absolute;
   right:-10px;
   top:20px;
+  z-index:0;
   color:#f0f0ed;
   font:900 clamp(65px,11vw,150px)/.9 Arial,sans-serif;
   letter-spacing:-.06em;
   user-select:none;
+  pointer-events:none;
+}
+
+.empty-state > :not(.empty-code){
+  position:relative;
+  z-index:1;
 }
 .empty-state h2{max-width:850px}
 .empty-state>p:not(.eyebrow){
