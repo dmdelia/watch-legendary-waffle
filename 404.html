@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#08090a">
+  <title>404 - ASTREA WATCH</title>
+  <link rel="icon" type="image/png" href="https://astreassp.de/favicon.png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <style>
+    .error-page{min-height:100vh;background:#08090a;color:#fff;display:grid;place-items:center;padding:28px}
+    .error-card-page{width:min(1100px,100%);display:grid;grid-template-columns:1fr .8fr;gap:70px;align-items:center}
+    .error-card-page h1{margin:14px 0 22px;font-size:clamp(64px,10vw,145px);line-height:.85;letter-spacing:-.06em}
+    .error-card-page p:not(.eyebrow){max-width:620px;color:#9ca1a4;font-size:18px}
+    .error-actions-page{display:flex;gap:25px;align-items:center;margin-top:30px;flex-wrap:wrap}
+    .error-visual-page{min-height:460px;border:1px solid #25292b;display:grid;place-items:center;background:radial-gradient(circle,rgba(0,255,200,.08),transparent 35%)}
+    .error-visual-page strong{color:#1b1e20;font-size:clamp(90px,16vw,220px);letter-spacing:-.08em}
+    @media(max-width:800px){.error-card-page{grid-template-columns:1fr}.error-visual-page{min-height:250px}}
+  </style>
+</head>
+<body>
+  <main class="error-page">
+    <section class="error-card-page">
+      <div>
+        <p class="eyebrow">ASTREA WATCH / 404</p>
+        <h1>Lost signal.</h1>
+        <p>This route is not part of the current ASTREA WATCH transmission map. Return to WATCH or continue to the main ASTREA SSP site.</p>
+        <div class="error-actions-page">
+          <a class="button button-light" href="/">Back to WATCH →</a>
+          <a class="text-link" href="https://astreassp.de">ASTREA SSP ↗</a>
+        </div>
+      </div>
+      <div class="error-visual-page" aria-hidden="true"><strong>404</strong></div>
+    </section>
+  </main>
+</body>
+</html>

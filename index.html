@@ -1,14 +1,141 @@
-<!DOCTYPE html>
-<html lang="de">
+<!doctype html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="ASTREA WATCH - live mission streams, engineering footage and videos from ASTREA SSP.">
+  <meta name="theme-color" content="#08090a">
+  <title>ASTREA WATCH</title>
+  <link rel="icon" type="image/png" href="https://astreassp.de/favicon.png">
+  <link rel="stylesheet" href="/assets/site.css">
 </head>
 <body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="ASTREA WATCH home">
+      <span class="brand-mark">A</span>
+      <span class="brand-copy"><strong>ASTREA</strong><small>WATCH</small></span>
+    </a>
 
-    <h1>Hello, World!</h1>
-    <p>Willkommen auf deiner ersten Webseite.</p>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">MENU</button>
 
+    <nav class="nav" id="site-nav">
+      <a class="active" href="/" data-i18n="nav_watch">Watch</a>
+      <a href="https://astreassp.de" data-i18n="nav_program">ASTREA SSP</a>
+      <a class="nav-youtube" href="https://www.youtube.com/@astreassp" target="_blank" rel="noreferrer">YouTube ↗</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="live-shell" id="live-shell" hidden>
+      <div class="live-inner">
+        <div class="live-heading">
+          <div>
+            <p class="eyebrow live-eyebrow"><span class="live-dot"></span><span data-i18n="live_now">LIVE NOW</span></p>
+            <h1 id="live-title">ASTREA LIVE</h1>
+          </div>
+          <a class="button button-ghost" id="live-youtube-link" href="https://www.youtube.com/@astreassp" target="_blank" rel="noreferrer" data-i18n="watch_youtube">Watch on YouTube ↗</a>
+        </div>
+
+        <div class="live-player">
+          <iframe id="live-frame" title="ASTREA live stream" loading="eager" allow="autoplay; encrypted-media; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        </div>
+
+        <div class="live-meta">
+          <span>ASTREA / WATCH</span>
+          <span data-i18n="live_feed">PRIMARY VIDEO FEED</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="hero">
+      <div class="hero-grid"></div>
+
+      <div class="hero-copy">
+        <p class="eyebrow">ASTREA SOLO SPACE PROGRAM / WATCH</p>
+        <h1 data-i18n="hero_title">Watch the build.<br>Watch the mission.</h1>
+        <p class="hero-lead" data-i18n="hero_lead">Mission streams, engineering footage, technical videos and development updates from ASTREA SSP.</p>
+
+        <div class="hero-actions">
+          <a class="button button-light" href="https://www.youtube.com/@astreassp" target="_blank" rel="noreferrer" data-i18n="youtube_channel">YouTube channel ↗</a>
+          <a class="text-link" href="https://astreassp.de" data-i18n="back_program">Enter ASTREA SSP →</a>
+        </div>
+      </div>
+
+      <div class="hero-panel" aria-hidden="true">
+        <div class="signal-rings"></div>
+        <div class="hero-panel-copy">
+          <span class="panel-kicker">ASTREA / MEDIA LINK</span>
+          <strong id="signal-state">STANDBY</strong>
+          <span data-i18n="signal_copy">Video feed automatically synchronized with YouTube.</span>
+        </div>
+      </div>
+
+      <div class="hero-meta">
+        <span>WATCH.ASTREASSP.DE</span>
+        <span id="sync-status">FEED: STANDBY</span>
+      </div>
+    </section>
+
+    <section class="content-shell" id="video-content">
+      <div class="section-heading">
+        <div>
+          <p class="section-label" data-i18n="latest_label">01 / LATEST TRANSMISSIONS</p>
+          <h2 data-i18n="latest_title">Latest from ASTREA.</h2>
+        </div>
+        <a class="text-link dark-link" href="https://www.youtube.com/@astreassp/videos" target="_blank" rel="noreferrer" data-i18n="all_youtube">All on YouTube ↗</a>
+      </div>
+
+      <div class="video-grid" id="video-grid" hidden></div>
+
+      <div class="empty-state" id="empty-state">
+        <div class="empty-code">NO SIGNAL / YET</div>
+        <p class="eyebrow" data-i18n="empty_kicker">ASTREA WATCH / STANDBY</p>
+        <h2 data-i18n="empty_title">Transmission has not started yet.</h2>
+        <p data-i18n="empty_copy">Mission streams, engineering footage and technical videos will appear here automatically as ASTREA publishes them.</p>
+
+        <div class="empty-actions">
+          <a class="button button-dark" href="https://www.youtube.com/@astreassp" target="_blank" rel="noreferrer" data-i18n="visit_youtube">Visit YouTube ↗</a>
+          <a class="text-link dark-link" href="https://astreassp.de" data-i18n="visit_program">Visit ASTREA SSP →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="about-watch">
+      <div class="section-label" data-i18n="about_label">02 / WATCH</div>
+      <div>
+        <h2 data-i18n="about_title">One place for every transmission.</h2>
+        <p data-i18n="about_copy">When ASTREA is live, the active stream is pinned above the hub. When nothing is live, WATCH becomes the archive for new videos and project footage.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div>
+      <strong>ASTREA WATCH</strong>
+      <span data-i18n="footer_copy">Broadcast layer of ASTREA Solo Space Program.</span>
+    </div>
+    <div class="footer-links">
+      <a href="https://astreassp.de">astreassp.de ↗</a>
+      <a href="https://www.youtube.com/@astreassp" target="_blank" rel="noreferrer">YouTube ↗</a>
+    </div>
+  </footer>
+
+  <div class="player-modal" id="player-modal" hidden>
+    <button class="modal-backdrop" type="button" data-close-player aria-label="Close video player"></button>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-head">
+        <div>
+          <p class="eyebrow">ASTREA / WATCH</p>
+          <h2 id="modal-title">Video</h2>
+        </div>
+        <button class="modal-close" type="button" data-close-player aria-label="Close video player">CLOSE</button>
+      </div>
+      <div class="modal-frame">
+        <iframe id="modal-iframe" title="ASTREA video player" allow="autoplay; encrypted-media; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/site.js"></script>
 </body>
 </html>
