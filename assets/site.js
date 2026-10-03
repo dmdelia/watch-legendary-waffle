@@ -21,7 +21,13 @@
 
   const dictionary = {
     en: {
+      nav_overview:'Overview',
+      nav_projects:'Systems',
+      nav_about:'The Program',
       nav_watch:'Watch',
+      nav_discord:'Discord ↗',
+      nav_github:'GitHub ↗',
+      menu:'MENU',
       nav_program:'ASTREA SSP',
       live_now:'LIVE NOW',
       watch_youtube:'Watch on YouTube ↗',
@@ -52,7 +58,13 @@
       video:'VIDEO'
     },
     de: {
+      nav_overview:'Übersicht',
+      nav_projects:'Systeme',
+      nav_about:'Das Programm',
       nav_watch:'Watch',
+      nav_discord:'Discord ↗',
+      nav_github:'GitHub ↗',
+      menu:'MENÜ',
       nav_program:'ASTREA SSP',
       live_now:'JETZT LIVE',
       watch_youtube:'Auf YouTube ansehen ↗',
