@@ -107,15 +107,36 @@ def main() -> int:
         print(f"YouTube sync failed: {exc}", file=sys.stderr)
         return 1
 
-    payload = {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+    next_state = {
         "channel_url": CHANNEL,
         "live": live,
         "videos": videos,
     }
 
+    current = {}
+    if OUTPUT.exists():
+        try:
+            current = json.loads(OUTPUT.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            current = {}
+
+    current_state = {
+        "channel_url": current.get("channel_url"),
+        "live": current.get("live"),
+        "videos": current.get("videos") or [],
+    }
+
+    if current_state == next_state:
+        print(f"No feed changes. Videos: {len(videos)}. Live: {'yes' if live else 'no'}")
+        return 0
+
+    payload = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        **next_state,
+    }
+
     OUTPUT.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    print(f"Synced {len(videos)} videos. Live: {'yes' if live else 'no'}")
+    print(f"Feed changed. Synced {len(videos)} videos. Live: {'yes' if live else 'no'}")
     return 0
 
 
