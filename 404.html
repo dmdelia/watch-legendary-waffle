@@ -3,35 +3,232 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="ASTREA WATCH - page not found.">
   <meta name="theme-color" content="#08090a">
   <title>404 - ASTREA WATCH</title>
   <link rel="icon" type="image/png" href="https://astreassp.de/favicon.png">
   <link rel="stylesheet" href="/assets/site.css">
   <style>
-    .error-page{min-height:100vh;background:#08090a;color:#fff;display:grid;place-items:center;padding:28px}
-    .error-card-page{width:min(1100px,100%);display:grid;grid-template-columns:1fr .8fr;gap:70px;align-items:center}
-    .error-card-page h1{margin:14px 0 22px;font-size:clamp(64px,10vw,145px);line-height:.85;letter-spacing:-.06em}
-    .error-card-page p:not(.eyebrow){max-width:620px;color:#9ca1a4;font-size:18px}
-    .error-actions-page{display:flex;gap:25px;align-items:center;margin-top:30px;flex-wrap:wrap}
-    .error-visual-page{min-height:460px;border:1px solid #25292b;display:grid;place-items:center;background:radial-gradient(circle,rgba(0,255,200,.08),transparent 35%)}
-    .error-visual-page strong{color:#1b1e20;font-size:clamp(90px,16vw,220px);letter-spacing:-.08em}
-    @media(max-width:800px){.error-card-page{grid-template-columns:1fr}.error-visual-page{min-height:250px}}
+    body.page-404{background:var(--black);color:#fff;min-height:100vh}
+
+    .error-shell{
+      min-height:calc(100vh - 74px);
+      position:relative;
+      overflow:hidden;
+      display:grid;
+      grid-template-columns:minmax(0,1.05fr) minmax(340px,.95fr);
+      align-items:center;
+      gap:clamp(40px,7vw,110px);
+      padding:clamp(56px,8vw,110px) max(28px,calc((100vw - var(--max))/2));
+      background:var(--black);
+    }
+
+    .error-shell::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+      background-size:50px 50px;
+      mask-image:linear-gradient(to right,transparent,black 18%,black 82%,transparent);
+      pointer-events:none;
+    }
+
+    .error-copy{position:relative;z-index:2;max-width:720px}
+    .error-copy h1{margin:18px 0 28px;font-size:clamp(58px,8vw,118px);line-height:.9}
+    .error-lead{max-width:650px;margin:0;color:#b7bbbd;font-size:clamp(18px,2vw,23px);line-height:1.55}
+    .error-sub{max-width:620px;margin:18px 0 0;color:#777d80;font-size:14px}
+
+    .error-actions{
+      display:flex;
+      align-items:center;
+      gap:28px;
+      margin-top:38px;
+      flex-wrap:wrap;
+    }
+
+    .error-status{
+      display:flex;
+      flex-wrap:wrap;
+      gap:22px;
+      margin-top:34px;
+      color:#62676a;
+      font:700 9px/1.4 monospace;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+    }
+
+    .error-visual{
+      position:relative;
+      z-index:2;
+      min-height:min(62vh,590px);
+      border:1px solid rgba(255,255,255,.06);
+      background:
+        radial-gradient(circle at 58% 42%,rgba(0,255,200,.08),transparent 30%),
+        linear-gradient(135deg,#15191b,#08090a);
+      overflow:hidden;
+    }
+
+    .error-visual::before{
+      content:"";
+      position:absolute;
+      width:78%;
+      aspect-ratio:1;
+      left:50%;
+      top:50%;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:50%;
+      transform:translate(-50%,-50%) rotate(-17deg);
+    }
+
+    .error-visual::after{
+      content:"";
+      position:absolute;
+      left:-10%;
+      top:50%;
+      width:120%;
+      height:1px;
+      background:rgba(255,255,255,.07);
+      transform:rotate(-18deg);
+    }
+
+    .error-code{
+      position:absolute;
+      top:38px;
+      left:38px;
+      z-index:1;
+      color:rgba(255,255,255,.08);
+      font:900 clamp(92px,12vw,168px)/1 Arial,Helvetica,sans-serif;
+      letter-spacing:-.06em;
+      user-select:none;
+    }
+
+    .error-card{
+      position:absolute;
+      right:34px;
+      bottom:34px;
+      z-index:3;
+      width:min(76%,365px);
+      padding:22px;
+      border:1px solid rgba(255,255,255,.11);
+      background:rgba(8,9,10,.72);
+      backdrop-filter:blur(12px);
+    }
+
+    .error-card .card-kicker{
+      margin:0 0 10px;
+      color:var(--accent);
+      font:700 9px/1.4 monospace;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+    }
+
+    .error-card h2{margin:0 0 12px;font-size:clamp(30px,3.3vw,44px);line-height:.98}
+    .error-card p:last-child{margin:0;color:#969b9e;font-size:13px;line-height:1.6}
+
+    @media(max-width:900px){
+      .error-shell{grid-template-columns:1fr}
+      .error-visual{min-height:390px}
+    }
+
+    @media(max-width:700px){
+      .error-shell{min-height:calc(100vh - 64px);padding:48px 20px 72px}
+      .error-actions{align-items:stretch;gap:14px}
+      .error-actions .button,.error-actions .text-link{width:100%;justify-content:center;text-align:center}
+      .error-card{left:22px;right:22px;bottom:22px;width:auto}
+    }
   </style>
 </head>
-<body>
-  <main class="error-page">
-    <section class="error-card-page">
-      <div>
-        <p class="eyebrow">ASTREA WATCH / 404</p>
-        <h1>Lost signal.</h1>
-        <p>This route is not part of the current ASTREA WATCH transmission map. Return to WATCH or continue to the main ASTREA SSP site.</p>
-        <div class="error-actions-page">
-          <a class="button button-light" href="/">Back to WATCH →</a>
-          <a class="text-link" href="https://astreassp.de">ASTREA SSP ↗</a>
-        </div>
-      </div>
-      <div class="error-visual-page" aria-hidden="true"><strong>404</strong></div>
-    </section>
-  </main>
+<body class="page-404">
+<header class="site-header">
+  <a class="brand" href="https://astreassp.de/" aria-label="ASTREA SSP home">
+    <img class="brand-logo" src="https://astreassp.de/logo.png" alt="ASTREA SSP logo">
+    <span>ASTREA SSP</span>
+  </a>
+  <button class="nav-toggle" aria-label="Open navigation" aria-expanded="false" data-i18n="menu">MENU</button>
+  <nav class="nav">
+    <a href="https://astreassp.de/" data-i18n="nav_overview">Overview</a>
+    <a href="https://astreassp.de/projects.html" data-i18n="nav_projects">Systems</a>
+    <a href="https://astreassp.de/about.html" data-i18n="nav_about">The Program</a>
+    <a class="active" href="https://watch.astreassp.de/" data-i18n="nav_watch">Watch</a>
+    <a href="https://discord.gg/NRd868Dkj2" target="_blank" rel="noreferrer" data-i18n="nav_discord">Discord ↗</a>
+    <a class="nav-github" href="https://github.com/ASTREA-SSP" target="_blank" rel="noreferrer" data-i18n="nav_github">GitHub ↗</a>
+  </nav>
+</header>
+
+<main class="error-shell">
+  <section class="error-copy">
+    <p class="eyebrow" data-404="eyebrow">ASTREA WATCH / 404</p>
+    <h1 data-404="title">Hello stranger.</h1>
+    <p class="error-lead" data-404="lead">You found a transmission route that does not exist.</p>
+    <p class="error-sub" data-404="sub">Maybe the link is broken, maybe the page moved, or maybe you drifted a little too far off course.</p>
+
+    <div class="error-actions">
+      <a class="button button-light" href="/" data-404="home">Back to WATCH →</a>
+      <a class="text-link" href="https://astreassp.de/" data-404="program">ASTREA SSP ↗</a>
+    </div>
+
+    <div class="error-status">
+      <span data-404="status">STATUS: PAGE NOT FOUND</span>
+      <span data-404="recovery">RECOVERY: RETURN TO WATCH</span>
+    </div>
+  </section>
+
+  <aside class="error-visual" aria-hidden="true">
+    <div class="error-code">404</div>
+    <div class="error-card">
+      <p class="card-kicker" data-404="card_kicker">NAVIGATION ERROR</p>
+      <h2 data-404="card_title">Invalid trajectory.</h2>
+      <p data-404="card_copy">The requested route is outside the mapped ASTREA WATCH structure. Reacquire the path through the main navigation.</p>
+    </div>
+  </aside>
+</main>
+
+<script src="/assets/site.js"></script>
+<script>
+(() => {
+  const preferredLanguages = Array.isArray(navigator.languages) && navigator.languages.length
+    ? navigator.languages
+    : [navigator.language || 'en'];
+
+  const isGerman = preferredLanguages.some((language) =>
+    String(language).toLowerCase().startsWith('de')
+  );
+
+  const copy = isGerman ? {
+    eyebrow:'ASTREA WATCH / 404',
+    title:'Hallo Fremder.',
+    lead:'Du hast eine Transmissionsroute entdeckt, die es gar nicht gibt.',
+    sub:'Vielleicht ist der Link kaputt, vielleicht wurde die Seite verschoben, oder du bist einfach ein wenig zu weit vom Kurs abgekommen.',
+    home:'Zurück zu WATCH →',
+    program:'ASTREA SSP ↗',
+    status:'STATUS: SEITE NICHT GEFUNDEN',
+    recovery:'RECOVERY: ZURÜCK ZU WATCH',
+    card_kicker:'NAVIGATIONSFEHLER',
+    card_title:'Ungültige Flugbahn.',
+    card_copy:'Die angeforderte Route liegt außerhalb der bekannten ASTREA WATCH Struktur. Nutze die Hauptnavigation, um wieder auf Kurs zu kommen.'
+  } : {
+    eyebrow:'ASTREA WATCH / 404',
+    title:'Hello stranger.',
+    lead:'You found a transmission route that does not exist.',
+    sub:'Maybe the link is broken, maybe the page moved, or maybe you drifted a little too far off course.',
+    home:'Back to WATCH →',
+    program:'ASTREA SSP ↗',
+    status:'STATUS: PAGE NOT FOUND',
+    recovery:'RECOVERY: RETURN TO WATCH',
+    card_kicker:'NAVIGATION ERROR',
+    card_title:'Invalid trajectory.',
+    card_copy:'The requested route is outside the mapped ASTREA WATCH structure. Reacquire the path through the main navigation.'
+  };
+
+  document.documentElement.lang = isGerman ? 'de' : 'en';
+
+  document.querySelectorAll('[data-404]').forEach((element) => {
+    const key = element.getAttribute('data-404');
+    if (copy[key]) element.textContent = copy[key];
+  });
+})();
+</script>
 </body>
 </html>
