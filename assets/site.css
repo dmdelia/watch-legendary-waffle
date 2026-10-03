@@ -38,41 +38,11 @@ p{line-height:1.65}
   z-index:40;
 }
 
-.brand{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-.brand-mark{
-  width:36px;
-  height:36px;
-  display:grid;
-  place-items:center;
-  border:1px solid #464b4e;
-  color:var(--accent);
-  font:900 19px/1 Arial,sans-serif;
-}
-.brand-copy{
-  display:flex;
-  flex-direction:column;
-  gap:3px;
-  font-family:monospace;
-  letter-spacing:.16em;
-}
-.brand-copy strong{font-size:12px}
-.brand-copy small{font-size:8px;color:#777d80}
+.brand{display:flex;align-items:center;gap:13px;font:800 14px/1 monospace;letter-spacing:.16em}.brand-logo{width:36px;height:36px;object-fit:contain}
 
-.nav{
-  display:flex;
-  align-items:center;
-  gap:27px;
-  font:700 10px/1 monospace;
-  text-transform:uppercase;
-  letter-spacing:.09em;
-}
-.nav a{opacity:.58}
+.nav{display:flex;align-items:center;gap:27px;font:600 11px/1 monospace;text-transform:uppercase;letter-spacing:.08em}
+.nav a{opacity:.65}
 .nav a:hover,.nav a.active{opacity:1}
-.nav-youtube{color:var(--accent)!important}
 .nav-toggle{
   display:none;
   border:0;
