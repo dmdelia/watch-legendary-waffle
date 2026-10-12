@@ -119,7 +119,7 @@
     switcher.appendChild(button);
   }
   document.querySelector('.site-header')?.appendChild(switcher);
-  if (lang === 'en') {
+  if (lang === 'en' && !document.querySelector('.error-shell')) {
     const note = document.createElement('p'); note.className = 'language-note';
     note.innerHTML = 'ASTREA currently publishes mainly in German. International visitors are welcome. <a href="https://discord.gg/NRd868Dkj2" target="_blank" rel="noopener noreferrer">Join Discord ↗</a>';
     document.querySelector('main')?.prepend(note);
@@ -131,9 +131,6 @@
   const privacyPrompt = document.getElementById('player-consent');
   const privacyText = document.getElementById('player-consent-text');
   const privacyButton = document.getElementById('player-consent-button');
-  privacyText.textContent = t.privacy_notice;
-  privacyButton.textContent = t.allow_video;
-  document.querySelectorAll('[data-close-player]').forEach(el => el.setAttribute('aria-label', t.close_video));
 
 
   document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -143,10 +140,22 @@
     else el.textContent = t[key];
   });
 
+  navToggle?.setAttribute('aria-label', lang === 'de' ? 'Navigation öffnen' : 'Open navigation');
   navToggle?.addEventListener('click', () => {
     const open = nav.classList.toggle('open');
     navToggle.setAttribute('aria-expanded', String(open));
   });
+  nav?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+    nav.classList.remove('open');
+    navToggle?.setAttribute('aria-expanded','false');
+  }));
+
+  // WATCH 404 shares navigation, translation and language selection,
+  // but has no video-player DOM.
+  if (!liveShell || !modal || !grid || !privacyText || !privacyButton) return;
+  privacyText.textContent = t.privacy_notice;
+  privacyButton.textContent = t.allow_video;
+  document.querySelectorAll('[data-close-player]').forEach(el => el.setAttribute('aria-label', t.close_video));
 
   const formatDuration = seconds => {
     if (!Number.isFinite(seconds) || seconds <= 0) return t.video;
