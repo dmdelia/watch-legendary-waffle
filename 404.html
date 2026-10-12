@@ -143,10 +143,10 @@
 <body class="page-404">
 <header class="site-header">
   <a class="brand" href="https://astreassp.de/" aria-label="ASTREA SSP home">
-    <img class="brand-logo" src="https://astreassp.de/logo.png" alt="ASTREA SSP logo">
+    <img class="brand-logo" src="https://astreassp.de/logo.png" alt="">
     <span>ASTREA SSP</span>
   </a>
-  <button class="nav-toggle" aria-label="Open navigation" aria-expanded="false" data-i18n="menu">MENU</button>
+  <button type="button" class="nav-toggle" aria-label="Open navigation" aria-expanded="false" data-i18n="menu">MENU</button>
   <nav class="nav">
     <a href="https://astreassp.de/" data-i18n="nav_overview">Overview</a>
     <a href="https://astreassp.de/projects" data-i18n="nav_projects">Systems</a>
@@ -159,7 +159,7 @@
 
 <main class="error-shell">
   <section class="error-copy">
-    <p class="eyebrow" data-404="eyebrow">ASTREA WATCH / 404</p>
+    
     <h1 data-404="title">Hello stranger.</h1>
     <p class="error-lead" data-404="lead">You found a transmission route that does not exist.</p>
     <p class="error-sub" data-404="sub">Maybe the link is broken, maybe the page moved, or maybe you drifted a little too far off course.</p>
@@ -167,6 +167,8 @@
     <div class="error-actions">
       <a class="button button-light" href="/" data-404="home">Back to WATCH →</a>
       <a class="text-link" href="https://astreassp.de/" data-404="program">ASTREA SSP ↗</a>
+      <a class="text-link" href="https://astreassp.de/privacy">Datenschutz / Privacy</a>
+      <a class="text-link" href="https://astreassp.de/impressum">Impressum / Legal notice</a>
     </div>
 
     <div class="error-status">
@@ -188,13 +190,7 @@
 <script src="/assets/site.js"></script>
 <script>
 (() => {
-  const preferredLanguages = Array.isArray(navigator.languages) && navigator.languages.length
-    ? navigator.languages
-    : [navigator.language || 'en'];
-
-  const isGerman = preferredLanguages.some((language) =>
-    String(language).toLowerCase().startsWith('de')
-  );
+  const isGerman = document.documentElement.lang === 'de';
 
   const copy = isGerman ? {
     eyebrow:'ASTREA WATCH / 404',
