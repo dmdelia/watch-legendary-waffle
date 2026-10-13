@@ -545,3 +545,6 @@ p{line-height:1.65}
 .live-consent{z-index:2;background:linear-gradient(135deg,#000b,#0008);text-shadow:0 2px 14px #000}
 .privacy-consent-link{text-decoration:underline;text-underline-offset:3px;color:#c0d6d1;font-size:13px}
 .video-thumb--local>.video-play{z-index:2}
+
+.skip-link{position:fixed;z-index:999;top:8px;left:10px;transform:translateY(-180%);padding:12px 18px;background:#fff;color:#080a0c;border:2px solid #111;font:700 14px Arial,sans-serif}
+.skip-link:focus{transform:none}
