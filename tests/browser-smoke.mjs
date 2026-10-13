@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { mkdirSync } from 'node:fs';
 import { chromium } from 'playwright';
 
 const ORIGIN = 'http://127.0.0.1:8765';
@@ -34,6 +35,10 @@ try {
       const response = await page.goto(ORIGIN + '/index.html', { waitUntil:'domcontentloaded' });
       assert(response?.ok());
       await page.locator('.video-card').first().waitFor();
+      if (width === 375 || width === 1366) {
+        mkdirSync('qa-screenshots',{recursive:true});
+        await page.screenshot({path:`qa-screenshots/watch-${locale}-${width}.png`,fullPage:true});
+      }
       assert.equal(await page.locator('#live-frame').getAttribute('src'), null);
       assert.equal(await page.locator('#modal-iframe').getAttribute('src'), null);
       assert.equal(youtubeRequests.length, 0, 'YouTube loaded without visitor action');
@@ -42,6 +47,9 @@ try {
       assert(overflow <= 2, `${locale} ${width}: ${overflow}px horizontal overflow`);
       await page.locator('.video-card').click();
       assert.equal(await page.locator('#player-modal').isVisible(), true);
+      if (width === 375) {
+        await page.screenshot({path:`qa-screenshots/watch-consent-${locale}-mobile.png`,fullPage:false});
+      }
       assert.equal(await page.locator('#modal-iframe').getAttribute('src'), null);
       assert.equal(youtubeRequests.length, 0, 'YouTube loaded just by opening the modal');
       await page.locator('#player-consent-button').click();
