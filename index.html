@@ -47,6 +47,7 @@
         </div>
 
         <div class="live-player">
+          <img id="live-poster" class="live-poster" alt="" hidden loading="lazy">
           <button id="live-consent" class="video-consent live-consent" type="button" hidden>Load YouTube livestream</button>
           <iframe id="live-frame" loading="lazy" title="ASTREA live stream" allow="autoplay; encrypted-media; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
         </div>
@@ -144,7 +145,11 @@
         <button class="modal-close" type="button" data-close-player aria-label="Close video player">CLOSE</button>
       </div>
       <div class="modal-frame">
-        <div class="video-consent" id="player-consent"><p id="player-consent-text"></p><button id="player-consent-button" class="button button-light" type="button">Load video</button></div>
+        <div class="video-consent" id="player-consent">
+          <p id="player-consent-text"></p>
+          <a class="privacy-consent-link" href="https://astreassp.de/privacy" target="_blank" rel="noopener noreferrer" aria-label="Datenschutz / Privacy (new tab)">Datenschutz / Privacy ↗</a>
+          <button id="player-consent-button" class="button button-light" type="button">Load video</button>
+        </div>
         <iframe id="modal-iframe" hidden title="ASTREA video player" allow="autoplay; encrypted-media; picture-in-picture; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
       </div>
     </div>
