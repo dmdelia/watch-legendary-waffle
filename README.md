@@ -50,3 +50,6 @@ Die Pull-Request-Workflows führen zusätzlich Chromium-Browser-Tests auf sechs 
 Die gemeinsamen Rechtstextentwürfe befinden sich im Hauptrepository unter `privacy.html` und `impressum.html`. Die ladungsfähige Anschrift ist weiterhin nicht geklärt. Siehe `docs/privacy-and-release.md`. **Die vorhandenen Platzhalter erlauben keine rechtlich abgeschlossene Veröffentlichung.**
 
 Der YouTube-Sync, der Einsatz von Cloudflare RUM und die tatsächlichen Browser-Netzwerkzugriffe sind nach dem Live-Deploy erneut zu überprüfen. Kein automatischer Merge nach `main`.
+
+## Unpublished legal notice
+The imprint is intentionally not linked because the source draft is incomplete. The draft is saved on `dmdelia/unhealthy-rock-watching` branch `legal/imprint-draft-2026-10`. This does **not** resolve statutory provider disclosure duties. Reintroduce the legal notice link only after a valid address and legal review.
