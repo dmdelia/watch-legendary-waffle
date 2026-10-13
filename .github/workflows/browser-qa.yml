@@ -20,6 +20,12 @@ jobs:
       - name: Test local static website
         run: |
           python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/astrea-browser-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8765/index.html >/dev/null; then break; fi
+            sleep 1
+          done
           node tests/browser-smoke.mjs
       - name: Upload UI preview screenshots
         if: always()
