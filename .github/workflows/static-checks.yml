@@ -1,0 +1,15 @@
+name: WATCH static checks
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check WATCH privacy gates
+        run: python3 scripts/check_site.py
+      - name: Test local thumbnail synchronization
+        run: python3 -m unittest discover -s tests -p 'test_youtube_sync.py' -v

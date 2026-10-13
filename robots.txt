@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://watch.astreassp.de/sitemap.xml

@@ -1,0 +1,37 @@
+name: Browser QA
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install browser test tools (CI only)
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Test local static website
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/astrea-browser-server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8765/index.html >/dev/null; then break; fi
+            sleep 1
+          done
+          node tests/browser-smoke.mjs
+      - name: Upload UI preview screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: astrea-ui-preview
+          path: qa-screenshots/
+          if-no-files-found: ignore
+          retention-days: 14

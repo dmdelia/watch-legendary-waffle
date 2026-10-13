@@ -16,7 +16,9 @@
   const langs = Array.isArray(navigator.languages) && navigator.languages.length
     ? navigator.languages
     : [navigator.language || 'en'];
-  const lang = langs.some(v => String(v).toLowerCase().startsWith('de')) ? 'de' : 'en';
+  let savedLanguage = null;
+  try { savedLanguage = localStorage.getItem('astrea-language'); } catch (_) { /* storage may be unavailable */ }
+  const lang = savedLanguage === 'de' || savedLanguage === 'en' ? savedLanguage : (langs.some(v => String(v).toLowerCase().startsWith('de')) ? 'de' : 'en');
   document.documentElement.lang = lang;
 
   const dictionary = {
@@ -55,7 +57,9 @@
       signal_live:'LIVE',
       signal_ready:'ONLINE',
       signal_standby:'STANDBY',
-      video:'VIDEO'
+      video:'VIDEO',
+      allow_video:'Load YouTube video', privacy_notice:'Only when you continue will an embedded player connect to YouTube (Google) and transmit technical information, including your IP address.',
+      live_notice:'Load YouTube livestream. This establishes a connection to YouTube (Google).', close_video:'Close video player'
     },
     de: {
       nav_overview:'Übersicht',
@@ -92,11 +96,61 @@
       signal_live:'LIVE',
       signal_ready:'ONLINE',
       signal_standby:'STANDBY',
-      video:'VIDEO'
+      video:'VIDEO',
+      allow_video:'YouTube-Video laden', privacy_notice:'Erst wenn du fortfährst, verbindet sich der eingebettete Player mit YouTube (Google). Dabei werden technische Daten einschließlich deiner IP-Adresse übermittelt.',
+      live_notice:'YouTube-Livestream laden. Dadurch wird eine Verbindung zu YouTube (Google) hergestellt.', close_video:'Videoplayer schließen'
     }
   };
 
+  const mainLandmark = document.querySelector('main');
+  if (mainLandmark) {
+    mainLandmark.id ||= 'main-content';
+    mainLandmark.setAttribute('tabindex','-1');
+    const skip = document.createElement('a');
+    skip.className = 'skip-link';
+    skip.href = '#main-content';
+    skip.textContent = lang === 'de' ? 'Zum Inhalt springen' : 'Skip to content';
+    document.body.prepend(skip);
+  }
+
   const t = dictionary[lang];
+  const switcher = document.createElement('div');
+  switcher.className = 'language-switch';
+  switcher.setAttribute('role', 'group');
+  switcher.setAttribute('aria-label', lang === 'de' ? 'Sprache wählen' : 'Select language');
+  for (const code of ['de','en']) {
+    const button = document.createElement('button');
+    button.type = 'button'; button.lang = code; button.textContent = code.toUpperCase();
+    button.setAttribute('aria-pressed', String(lang === code));
+    button.setAttribute('aria-label', code === 'de' ? 'Deutsch' : 'English');
+    button.addEventListener('click', () => {
+      try { localStorage.setItem('astrea-language', code); } catch (_) { /* no storage */ }
+      location.reload();
+    });
+    switcher.appendChild(button);
+  }
+  document.querySelector('.site-header')?.appendChild(switcher);
+  if (lang === 'en' && !document.querySelector('.error-shell')) {
+    const note = document.createElement('p'); note.className = 'language-note';
+    note.innerHTML = 'ASTREA currently publishes mainly in German. International visitors are welcome. <a href="https://discord.gg/NRd868Dkj2" target="_blank" rel="noopener noreferrer">Join Discord ↗</a>';
+    document.querySelector('main')?.prepend(note);
+  }
+  const validId = id => typeof id === 'string' && /^[A-Za-z0-9_-]{11}$/.test(id);
+  const background = [
+    document.querySelector('.site-header'),
+    document.querySelector('main'),
+    document.querySelector('footer'),
+    document.querySelector('.skip-link')
+  ].filter(Boolean);
+  let lastTrigger = null;
+  let pendingId = null;
+  const embedUrl = id => 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?autoplay=1&rel=0';
+  const localThumbnail = id => '/assets/thumbnails/' + encodeURIComponent(id) + '.jpg';
+  const hasLocalThumbnail = item => item && validId(item.id) && item.thumbnail === localThumbnail(item.id);
+  const privacyPrompt = document.getElementById('player-consent');
+  const privacyText = document.getElementById('player-consent-text');
+  const privacyButton = document.getElementById('player-consent-button');
+
 
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.dataset.i18n;
@@ -105,10 +159,31 @@
     else el.textContent = t[key];
   });
 
+  navToggle?.setAttribute('aria-label', lang === 'de' ? 'Navigation öffnen' : 'Open navigation');
   navToggle?.addEventListener('click', () => {
     const open = nav.classList.toggle('open');
     navToggle.setAttribute('aria-expanded', String(open));
   });
+  nav?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+    nav.classList.remove('open');
+    navToggle?.setAttribute('aria-expanded','false');
+  }));
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && nav?.classList.contains('open')) {
+      nav.classList.remove('open');
+      navToggle?.setAttribute('aria-expanded','false');
+      navToggle?.focus();
+    }
+  });
+
+  // WATCH 404 shares navigation, translation and language selection,
+  // but has no video-player DOM.
+  if (!liveShell || !modal || !grid || !privacyText || !privacyButton) return;
+  privacyText.textContent = t.privacy_notice;
+  privacyButton.textContent = t.allow_video;
+  const closeButton = document.querySelector('.modal-close');
+  if (closeButton) closeButton.textContent = lang === 'de' ? 'SCHLIESSEN' : 'CLOSE';
+  document.querySelectorAll('[data-close-player]').forEach(el => el.setAttribute('aria-label', t.close_video));
 
   const formatDuration = seconds => {
     if (!Number.isFinite(seconds) || seconds <= 0) return t.video;
@@ -121,82 +196,117 @@
       : [m, s].map(v => String(v).padStart(2,'0')).join(':');
   };
 
-  const thumbnail = id => `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
-  const fallbackThumbnail = id => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 
   const openPlayer = (id, title) => {
+    if (!validId(id)) return;
+    pendingId = id;
+    lastTrigger = document.activeElement;
     modalTitle.textContent = title || 'ASTREA WATCH';
-    modalFrame.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?autoplay=1&rel=0`;
+    modalFrame.removeAttribute('src');
+    privacyPrompt.hidden = false;
+    modalFrame.hidden = true;
     modal.hidden = false;
+    background.forEach(element => { element.inert = true; });
     document.body.classList.add('modal-open');
+    privacyButton.focus();
   };
+  privacyButton.addEventListener('click', () => {
+    if (!validId(pendingId)) return;
+    modalFrame.src = embedUrl(pendingId);
+    modalFrame.hidden = false;
+    privacyPrompt.hidden = true;
+    document.querySelector('[data-close-player].modal-close')?.focus();
+  });
 
   const closePlayer = () => {
     modal.hidden = true;
-    modalFrame.src = '';
+    background.forEach(element => { element.inert = false; });
+    modalFrame.removeAttribute('src');
+    pendingId = null;
     document.body.classList.remove('modal-open');
+    if (lastTrigger && typeof lastTrigger.focus === 'function') lastTrigger.focus();
   };
-
   document.querySelectorAll('[data-close-player]').forEach(el => el.addEventListener('click', closePlayer));
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && !modal.hidden) closePlayer();
+    if (modal.hidden) return;
+    if (event.key === 'Escape') { closePlayer(); return; }
+    if (event.key === 'Tab') {
+      const controls = [...modal.querySelectorAll('button:not([hidden]), a[href]')].filter(el => el.getClientRects().length > 0);
+      if (!controls.length) return;
+      const first = controls[0], last = controls[controls.length-1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    }
   });
 
   const renderLive = live => {
-    if (!live || !live.id) {
+    if (!live || !validId(live.id)) {
       liveShell.hidden = true;
+      liveFrame.removeAttribute('src');
       return false;
     }
-
     liveTitle.textContent = live.title || 'ASTREA LIVE';
-    liveFrame.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(live.id)}?autoplay=1&rel=0`;
-    liveLink.href = live.url || `https://www.youtube.com/watch?v=${encodeURIComponent(live.id)}`;
+    liveFrame.removeAttribute('src');
+    const poster = document.getElementById('live-poster');
+    if (poster) {
+      poster.hidden = !hasLocalThumbnail(live);
+      if (hasLocalThumbnail(live)) {
+        poster.src = localThumbnail(live.id);
+        poster.onerror = () => { poster.hidden = true; };
+      } else {
+        poster.removeAttribute('src');
+      }
+    }
+    const consent = document.getElementById('live-consent');
+    consent.hidden = false;
+    consent.textContent = t.live_notice;
+    consent.onclick = () => {
+      liveFrame.src = embedUrl(live.id);
+      if (poster) poster.hidden = true;
+      consent.hidden = true;
+    };
+    liveLink.href = 'https://www.youtube.com/watch?v=' + encodeURIComponent(live.id);
     liveShell.hidden = false;
     return true;
   };
 
   const renderVideos = videos => {
-    const safeVideos = Array.isArray(videos) ? videos.filter(v => v && v.id) : [];
-    grid.innerHTML = '';
-
+    const safeVideos = Array.isArray(videos) ? videos.filter(v => v && validId(v.id)) : [];
+    grid.replaceChildren();
     if (!safeVideos.length) {
-      grid.hidden = true;
-      emptyState.hidden = false;
-      return false;
+      grid.hidden = true; emptyState.hidden = false; return false;
     }
-
     safeVideos.forEach(video => {
       const card = document.createElement('button');
       card.className = 'video-card';
       card.type = 'button';
-      card.innerHTML = `
-        <div class="video-thumb">
-          <img src="${thumbnail(video.id)}" alt="" loading="lazy">
-          <span class="video-play">▶</span>
-        </div>
-        <div class="video-meta">
-          <span>YOUTUBE / ASTREA</span>
-          <span>${formatDuration(video.duration)}</span>
-        </div>
-        <h3></h3>
-      `;
-
-      const img = card.querySelector('img');
-      img.addEventListener('error', () => {
-        if (!img.dataset.fallback) {
-          img.dataset.fallback = '1';
-          img.src = fallbackThumbnail(video.id);
-        }
-      });
-
-      card.querySelector('h3').textContent = video.title || 'ASTREA video';
+      const thumb = document.createElement('div'); thumb.className = 'video-thumb video-thumb--local';
+      const text = document.createElement('span'); text.className = 'video-thumbnail-label'; text.textContent = 'ASTREA / WATCH';
+      const play = document.createElement('span'); play.className = 'video-play'; play.textContent = '▶';
+      thumb.append(text,play);
+      if (hasLocalThumbnail(video)) {
+        const image = document.createElement('img');
+        image.src = localThumbnail(video.id);
+        image.alt = '';
+        image.loading = 'lazy';
+        text.hidden = true;
+        image.addEventListener('error', () => {
+          image.remove();
+          text.hidden = false;
+        });
+        thumb.prepend(image);
+      }
+      const meta = document.createElement('div'); meta.className = 'video-meta';
+      const m1 = document.createElement('span'); m1.textContent = 'YOUTUBE / ASTREA';
+      const m2 = document.createElement('span'); m2.textContent = formatDuration(video.duration);
+      meta.append(m1,m2);
+      const title = document.createElement('h3'); title.textContent = video.title || 'ASTREA video';
+      card.append(thumb,meta,title);
+      card.setAttribute('aria-label', (lang === 'de' ? 'Videoinformationen und Wiedergabe: ' : 'Video details and playback: ') + title.textContent);
       card.addEventListener('click', () => openPlayer(video.id, video.title));
       grid.appendChild(card);
     });
-
-    grid.hidden = false;
-    emptyState.hidden = true;
-    return true;
+    grid.hidden = false; emptyState.hidden = true; return true;
   };
 
   const setFeedState = (live, videos) => {
