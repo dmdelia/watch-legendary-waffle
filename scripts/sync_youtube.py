@@ -120,7 +120,7 @@ def cache_thumbnail(video_id: str) -> str | None:
         with urlopen(request, timeout=10) as response:
             mime = response.headers.get_content_type()
             body = response.read(MAX_THUMBNAIL_BYTES + 1)
-        if mime != "image/jpeg" or not body.startswith(b"\\xff\\xd8\\xff") or not (2_000 <= len(body) <= MAX_THUMBNAIL_BYTES):
+        if mime != "image/jpeg" or not body.startswith(b"\xff\xd8\xff") or not (2_000 <= len(body) <= MAX_THUMBNAIL_BYTES):
             print(f"Thumbnail rejected for {video_id}", file=sys.stderr)
             return None
         temporary = target.with_suffix(".jpg.tmp")
