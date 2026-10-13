@@ -39,8 +39,10 @@ def main() -> int:
             errors.append(f"missing gated activation logic: {expected}")
     if "i.ytimg.com" in js or "maxresdefault.jpg" in js:
         errors.append("external video thumbnails loaded before playback")
-    if "astreassp.de/privacy" not in html or "astreassp.de/impressum" not in html:
-        errors.append("missing shared privacy and legal notice links")
+    if "astreassp.de/privacy" not in html:
+        errors.append("missing shared privacy link")
+    if "astreassp.de/impressum" in html:
+        errors.append("incomplete imprint must not be linked")
     if errors:
         print("\n".join("FAIL: " + error for error in errors), file=sys.stderr)
         return 1
