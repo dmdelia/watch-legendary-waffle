@@ -102,6 +102,17 @@
     }
   };
 
+  const mainLandmark = document.querySelector('main');
+  if (mainLandmark) {
+    mainLandmark.id ||= 'main-content';
+    mainLandmark.setAttribute('tabindex','-1');
+    const skip = document.createElement('a');
+    skip.className = 'skip-link';
+    skip.href = '#main-content';
+    skip.textContent = lang === 'de' ? 'Zum Inhalt springen' : 'Skip to content';
+    document.body.prepend(skip);
+  }
+
   const t = dictionary[lang];
   const switcher = document.createElement('div');
   switcher.className = 'language-switch';
@@ -125,6 +136,12 @@
     document.querySelector('main')?.prepend(note);
   }
   const validId = id => typeof id === 'string' && /^[A-Za-z0-9_-]{11}$/.test(id);
+  const background = [
+    document.querySelector('.site-header'),
+    document.querySelector('main'),
+    document.querySelector('footer'),
+    document.querySelector('.skip-link')
+  ].filter(Boolean);
   let lastTrigger = null;
   let pendingId = null;
   const embedUrl = id => 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?autoplay=1&rel=0';
@@ -151,6 +168,13 @@
     nav.classList.remove('open');
     navToggle?.setAttribute('aria-expanded','false');
   }));
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && nav?.classList.contains('open')) {
+      nav.classList.remove('open');
+      navToggle?.setAttribute('aria-expanded','false');
+      navToggle?.focus();
+    }
+  });
 
   // WATCH 404 shares navigation, translation and language selection,
   // but has no video-player DOM.
@@ -182,6 +206,7 @@
     privacyPrompt.hidden = false;
     modalFrame.hidden = true;
     modal.hidden = false;
+    background.forEach(element => { element.inert = true; });
     document.body.classList.add('modal-open');
     privacyButton.focus();
   };
@@ -195,6 +220,7 @@
 
   const closePlayer = () => {
     modal.hidden = true;
+    background.forEach(element => { element.inert = false; });
     modalFrame.removeAttribute('src');
     pendingId = null;
     document.body.classList.remove('modal-open');
