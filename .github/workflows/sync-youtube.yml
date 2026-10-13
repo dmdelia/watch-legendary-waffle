@@ -33,7 +33,10 @@ jobs:
 
       - name: Commit feed changes
         run: |
-          git add -A -- data/videos.json assets/thumbnails/
+          git add -A -- data/videos.json
+          if [ -d assets/thumbnails ]; then
+            git add -A -- assets/thumbnails
+          fi
           if git diff --cached --quiet; then
             echo "No feed or thumbnail changes."
             exit 0
