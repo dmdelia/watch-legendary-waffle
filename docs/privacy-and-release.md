@@ -1,6 +1,6 @@
 # WATCH privacy and release checks
 
-This site is an ASTREA SSP subdomain. The shared bilingual privacy notice is maintained in `dmdelia/unhealthy-rock-watching/privacy.html`; the legal notice is `impressum.html`. Both are still working drafts with a pending legally valid service address.
+This site is an ASTREA SSP subdomain. The shared bilingual privacy notice is maintained in `dmdelia/unhealthy-rock-watching/privacy.html`; the incomplete imprint is deliberately unpublished, with a preserved draft on the main repository's `legal/imprint-draft-2026-10` branch. An actual valid service address and legal clearance are still outstanding; withholding the page does not waive legal obligations.
 
 ## Implemented in this branch
 - YouTube thumbnail files are downloaded during GitHub Actions synchronization and served from **this origin**. When a file has not yet been cached, video cards display a local text placeholder. Visitors never fetch thumbnails directly from `i.ytimg.com`.
@@ -12,7 +12,7 @@ This site is an ASTREA SSP subdomain. The shared bilingual privacy notice is mai
 - Local thumbnail caching has been added to `scripts/sync_youtube.py` and `.github/workflows/sync-youtube.yml`. No new website tracking script or cookie was added.
 
 ## Must verify before merge
-- [ ] Complete operator legal address on shared `astreassp.de` pages; satisfy statutory information obligations.
+- [ ] Obtain legal service address and publish a complete, accessible legal notice on `astreassp.de`; then restore its links on WATCH and check statutory obligations.
 - [ ] Confirm Cloudflare automatic RUM behavior for WATCH and EU/EEA visitors.
 - [ ] Confirm cookie/security challenge behavior and actual network requests in live production.
 - [x] Chromium browser tests verify click-to-load for video, livestream, close/reopen, Escape and focus restoration in both languages and 6 viewport widths. [ ] Repeat on live Cloudflare domain.
