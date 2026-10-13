@@ -7,8 +7,6 @@
   const liveLink = document.getElementById('live-youtube-link');
   const grid = document.getElementById('video-grid');
   const emptyState = document.getElementById('empty-state');
-  const syncStatus = document.getElementById('sync-status');
-  const signalState = document.getElementById('signal-state');
   const modal = document.getElementById('player-modal');
   const modalTitle = document.getElementById('modal-title');
   const modalFrame = document.getElementById('modal-iframe');
@@ -25,7 +23,7 @@
     en: {
       nav_overview:'Overview',
       nav_projects:'Systems',
-      nav_about:'The Program',
+      nav_about:'The Program', nav_support:'Support',
       nav_watch:'Watch',
       nav_discord:'Discord ↗',
       nav_github:'GitHub ↗',
@@ -50,7 +48,7 @@
       about_label:'02 / WATCH',
       about_title:'One place for every transmission.',
       about_copy:'When ASTREA is live, the active stream is pinned above the hub. When nothing is live, WATCH becomes the archive for new videos and project footage.',
-      footer_copy:'Broadcast layer of ASTREA Solo Space Program.',
+      footer_copy:'Videos and livestreams from ASTREA Solo Space Program.',
       feed_live:'FEED: LIVE',
       feed_ready:'FEED: ONLINE',
       feed_standby:'FEED: STANDBY',
@@ -64,7 +62,7 @@
     de: {
       nav_overview:'Übersicht',
       nav_projects:'Systeme',
-      nav_about:'Das Programm',
+      nav_about:'Das Programm', nav_support:'Support',
       nav_watch:'Watch',
       nav_discord:'Discord ↗',
       nav_github:'GitHub ↗',
@@ -89,7 +87,7 @@
       about_label:'02 / WATCH',
       about_title:'Ein Ort fuer jede Transmission.',
       about_copy:'Wenn ASTREA live ist, wird der aktive Stream oben im Hub angepinnt. Wenn nichts live ist, wird WATCH zum Archiv fuer neue Videos und Projektaufnahmen.',
-      footer_copy:'Broadcast Layer des ASTREA Solo Space Program.',
+      footer_copy:'Videos und Livestreams aus dem ASTREA Solo Space Program.',
       feed_live:'FEED: LIVE',
       feed_ready:'FEED: ONLINE',
       feed_standby:'FEED: STANDBY',
@@ -309,22 +307,7 @@
     grid.hidden = false; emptyState.hidden = true; return true;
   };
 
-  const setFeedState = (live, videos) => {
-    if (live) {
-      syncStatus.textContent = t.feed_live;
-      signalState.textContent = t.signal_live;
-      return;
-    }
-
-    if (videos) {
-      syncStatus.textContent = t.feed_ready;
-      signalState.textContent = t.signal_ready;
-      return;
-    }
-
-    syncStatus.textContent = t.feed_standby;
-    signalState.textContent = t.signal_standby;
-  };
+  const setFeedState = () => {}; // Video grid and live stream provide the actual status.
 
   fetch('/data/videos.json', {cache:'no-store'})
     .then(response => {
