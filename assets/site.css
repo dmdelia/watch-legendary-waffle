@@ -537,3 +537,11 @@ p{line-height:1.65}
 @media(max-width:980px){.language-switch{margin-left:auto;margin-right:10px}}
 @media(max-width:700px){.language-switch{gap:2px}.language-switch button{padding:7px 6px}.site-footer{align-items:flex-start;flex-direction:column}.hero-panel{min-height:320px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.live-dot{animation:none}.video-thumb img,.video-card:hover .video-thumb img{transition:none;transform:none}}
+
+/* Images are synchronized server-side into this same-origin repository. */
+.video-thumb--local>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.video-thumbnail-label[hidden],.live-poster[hidden]{display:none!important}
+.live-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+.live-consent{z-index:2;background:linear-gradient(135deg,#000b,#0008);text-shadow:0 2px 14px #000}
+.privacy-consent-link{text-decoration:underline;text-underline-offset:3px;color:#c0d6d1;font-size:13px}
+.video-thumb--local>.video-play{z-index:2}
