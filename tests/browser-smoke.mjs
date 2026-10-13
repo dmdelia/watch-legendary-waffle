@@ -15,7 +15,7 @@ const browser = await chromium.launch({ headless: true });
 let checks = 0;
 try {
   for (const locale of ['de-DE','en-US']) {
-    for (const width of [375,768,1366]) {
+    for (const width of [320,375,768,1024,1366,1920]) {
       const context = await browser.newContext({ locale, viewport: { width, height: 850 }, reducedMotion: 'reduce' });
       const page = await context.newPage();
       const errors = [];
