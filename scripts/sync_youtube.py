@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
+from urllib.request import Request, urlopen
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -9,7 +11,10 @@ from yt_dlp import YoutubeDL
 
 CHANNEL = "https://www.youtube.com/@astreassp"
 OUTPUT = Path("data/videos.json")
+THUMBNAILS = Path("assets/thumbnails")
 VIDEO_LIMIT = 18
+MAX_THUMBNAIL_BYTES = 250_000
+VIDEO_ID = re.compile(r"^[A-Za-z0-9_-]{11}$")
 
 
 def ydl_extract(url: str, *, flat: bool = False, playlistend: int | None = None):
@@ -97,6 +102,45 @@ def get_videos() -> list[dict]:
     return result
 
 
+
+def cache_thumbnail(video_id: str) -> str | None:
+    """Cache YouTube image on the CI runner, never in a visitor's browser."""
+    if not VIDEO_ID.fullmatch(video_id):
+        return None
+    THUMBNAILS.mkdir(parents=True, exist_ok=True)
+    target = THUMBNAILS / f"{video_id}.jpg"
+    if target.is_file() and 2_000 <= target.stat().st_size <= MAX_THUMBNAIL_BYTES:
+        return f"/assets/thumbnails/{video_id}.jpg"
+
+    request = Request(
+        f"https://i.ytimg.com/vi/{video_id}/mqdefault.jpg",
+        headers={"User-Agent": "ASTREA-WATCH-Thumbnail-Sync/1.0"},
+    )
+    try:
+        with urlopen(request, timeout=10) as response:
+            mime = response.headers.get_content_type()
+            body = response.read(MAX_THUMBNAIL_BYTES + 1)
+        if mime != "image/jpeg" or not body.startswith(b"\\xff\\xd8\\xff") or not (2_000 <= len(body) <= MAX_THUMBNAIL_BYTES):
+            print(f"Thumbnail rejected for {video_id}", file=sys.stderr)
+            return None
+        temporary = target.with_suffix(".jpg.tmp")
+        temporary.write_bytes(body)
+        temporary.replace(target)
+        return f"/assets/thumbnails/{video_id}.jpg"
+    except (OSError, ValueError) as exc:
+        print(f"Thumbnail unavailable for {video_id}: {exc}", file=sys.stderr)
+        return None
+
+
+def clean_old_thumbnails(keep_ids: set[str]) -> None:
+    """Remove only known video ID JPGs no longer in the active feed."""
+    if not THUMBNAILS.exists():
+        return
+    for target in THUMBNAILS.glob("*.jpg"):
+        if VIDEO_ID.fullmatch(target.stem) and target.stem not in keep_ids:
+            target.unlink()
+
+
 def main() -> int:
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
 
@@ -107,12 +151,6 @@ def main() -> int:
         print(f"YouTube sync failed: {exc}", file=sys.stderr)
         return 1
 
-    next_state = {
-        "channel_url": CHANNEL,
-        "live": live,
-        "videos": videos,
-    }
-
     current = {}
     if OUTPUT.exists():
         try:
@@ -120,6 +158,35 @@ def main() -> int:
         except (json.JSONDecodeError, OSError):
             current = {}
 
+    # A temporary YouTube indexing/yt-dlp failure must not erase existing cards.
+    if not videos and current.get("videos"):
+        print("YouTube returned no videos. Preserving last known feed.", file=sys.stderr)
+        videos = [
+            {key: value for key, value in item.items() if key != "thumbnail"}
+            for item in current["videos"] if isinstance(item, dict) and VIDEO_ID.fullmatch(str(item.get("id", "")))
+        ]
+
+    keep_ids: set[str] = set()
+    for item in videos:
+        video_id = item["id"]
+        if not VIDEO_ID.fullmatch(video_id):
+            continue
+        keep_ids.add(video_id)
+        thumbnail_url = cache_thumbnail(video_id)
+        if thumbnail_url:
+            item["thumbnail"] = thumbnail_url
+    if live and VIDEO_ID.fullmatch(live["id"]):
+        keep_ids.add(live["id"])
+        thumbnail_url = cache_thumbnail(live["id"])
+        if thumbnail_url:
+            live["thumbnail"] = thumbnail_url
+    clean_old_thumbnails(keep_ids)
+
+    next_state = {
+        "channel_url": CHANNEL,
+        "live": live,
+        "videos": videos,
+    }
     current_state = {
         "channel_url": current.get("channel_url"),
         "live": current.get("live"),
