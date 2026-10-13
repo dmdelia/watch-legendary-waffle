@@ -128,6 +128,8 @@
   let lastTrigger = null;
   let pendingId = null;
   const embedUrl = id => 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(id) + '?autoplay=1&rel=0';
+  const localThumbnail = id => '/assets/thumbnails/' + encodeURIComponent(id) + '.jpg';
+  const hasLocalThumbnail = item => item && validId(item.id) && item.thumbnail === localThumbnail(item.id);
   const privacyPrompt = document.getElementById('player-consent');
   const privacyText = document.getElementById('player-consent-text');
   const privacyButton = document.getElementById('player-consent-button');
@@ -155,6 +157,8 @@
   if (!liveShell || !modal || !grid || !privacyText || !privacyButton) return;
   privacyText.textContent = t.privacy_notice;
   privacyButton.textContent = t.allow_video;
+  const closeButton = document.querySelector('.modal-close');
+  if (closeButton) closeButton.textContent = lang === 'de' ? 'SCHLIESSEN' : 'CLOSE';
   document.querySelectorAll('[data-close-player]').forEach(el => el.setAttribute('aria-label', t.close_video));
 
   const formatDuration = seconds => {
@@ -217,11 +221,22 @@
     }
     liveTitle.textContent = live.title || 'ASTREA LIVE';
     liveFrame.removeAttribute('src');
+    const poster = document.getElementById('live-poster');
+    if (poster) {
+      poster.hidden = !hasLocalThumbnail(live);
+      if (hasLocalThumbnail(live)) {
+        poster.src = localThumbnail(live.id);
+        poster.onerror = () => { poster.hidden = true; };
+      } else {
+        poster.removeAttribute('src');
+      }
+    }
     const consent = document.getElementById('live-consent');
     consent.hidden = false;
     consent.textContent = t.live_notice;
     consent.onclick = () => {
       liveFrame.src = embedUrl(live.id);
+      if (poster) poster.hidden = true;
       consent.hidden = true;
     };
     liveLink.href = 'https://www.youtube.com/watch?v=' + encodeURIComponent(live.id);
@@ -243,6 +258,18 @@
       const text = document.createElement('span'); text.className = 'video-thumbnail-label'; text.textContent = 'ASTREA / WATCH';
       const play = document.createElement('span'); play.className = 'video-play'; play.textContent = '▶';
       thumb.append(text,play);
+      if (hasLocalThumbnail(video)) {
+        const image = document.createElement('img');
+        image.src = localThumbnail(video.id);
+        image.alt = '';
+        image.loading = 'lazy';
+        text.hidden = true;
+        image.addEventListener('error', () => {
+          image.remove();
+          text.hidden = false;
+        });
+        thumb.prepend(image);
+      }
       const meta = document.createElement('div'); meta.className = 'video-meta';
       const m1 = document.createElement('span'); m1.textContent = 'YOUTUBE / ASTREA';
       const m2 = document.createElement('span'); m2.textContent = formatDuration(video.duration);
